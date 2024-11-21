@@ -3,7 +3,7 @@ public class CampXSponsorBeforeInsertTest {
     @isTest
     static void testStatusDefault(){
         // insert test sponsor
-        CAMPX_Sponsor__c sponsor = new CAMPX_Sponsor__c(Name = 'Test Sponsor');
+        CAMPX__Sponsor__c sponsor = new CAMPX__Sponsor__c(Name = 'Test Sponsor');
         insert sponsor;
 
         // Query the inserted record to check the status
