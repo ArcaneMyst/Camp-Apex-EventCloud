@@ -14,4 +14,19 @@ public class CampXSponsorBeforeInsertTest {
 
     }
 
+
+    @isTest
+    static void testStatusAdded(){
+        // insert test sponsor
+        CAMPX__Sponsor__c sponsor = new CAMPX__Sponsor__c(Name = 'Test Sponsor', CAMPX__Status__c = 'Accepted');
+        insert sponsor;
+
+        // Query the inserted record to check the status
+        CAMPX__Sponsor__c insertedSponsor = [SELECT CAMPX__Status__c FROM CAMPX__Sponsor__c WHERE Id = :sponsor.Id];
+
+        // Assert that the status is set to "Pending"
+        System.assertEquals('Accepted', insertedSponsor.CAMPX__Status__c);
+
+    }
+
 }
