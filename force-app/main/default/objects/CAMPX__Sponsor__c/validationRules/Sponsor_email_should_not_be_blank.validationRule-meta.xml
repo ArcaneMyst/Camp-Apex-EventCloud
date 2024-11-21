@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sponsor_email_should_not_be_blank</fullName>
+    <active>true</active>
+    <description>When a CAMPX__Sponsor__c record is created without a value in CAMPX__Email__c, the user should see an error stating &quot;A sponsor can not be created without an email address&quot;</description>
+    <errorConditionFormula>ISBLANK(CAMPX__Email__c)</errorConditionFormula>
+    <errorDisplayField>CAMPX__Email__c</errorDisplayField>
+    <errorMessage>A sponsor can not be created without an email address</errorMessage>
+</ValidationRule>

@@ -17,12 +17,8 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>*</members>
-        <name>Page</name>
+    <members>*</members>
+    <name>ValidationRule</name>
     </types>
-    <types>
-        <members>*</members>
-        <name>Component</name>
-    </types>
-    <version>57.0</version>
+    <version>58.0</version>
 </Package>

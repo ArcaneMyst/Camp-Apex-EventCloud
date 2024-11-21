@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sponsor_Acceptance_Criteria</fullName>
+    <active>true</active>
+    <description>Prevent the status of a sponsor record from being updated to &quot;Accepted&quot; unless it is associated with an event</description>
+    <errorConditionFormula>ISBLANK(CAMPX__Event__c) &amp;&amp;  ISPICKVAL(CAMPX__Status__c, &apos;Accepted&apos;)</errorConditionFormula>
+    <errorDisplayField>CAMPX__Event__c</errorDisplayField>
+    <errorMessage>A Sponsor must be associated with an event before being Accepted.</errorMessage>
+</ValidationRule>
