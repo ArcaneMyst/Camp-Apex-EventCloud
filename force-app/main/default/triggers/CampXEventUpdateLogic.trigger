@@ -15,21 +15,10 @@ trigger CampXEventUpdateLogic on CAMPX__Event__c (after update) {
         }
 
         // Logic to check if revenue or expense has changed and calculate net revenue
-        if (
-            (Trigger.OldMap.get(event.Id).CAMPX__GrossRevenue__c != event.CAMPX__GrossRevenue__c ||
-             Trigger.OldMap.get(event.Id).CAMPX__TotalExpenses__c != event.CAMPX__TotalExpenses__c) &&
-            event.CAMPX__GrossRevenue__c != null && event.CAMPX__TotalExpenses__c != null
-        ) {
-            updatedEvent.Id = event.Id; // Ensure the Id is set
-            updatedEvent.CAMPX__NetRevenue__c = event.CAMPX__GrossRevenue__c - event.CAMPX__TotalExpenses__c;
-            needsUpdate = true;
-        } else if (event.CAMPX__GrossRevenue__c == null || event.CAMPX__TotalExpenses__c == null) {
-            updatedEvent.Id = event.Id; // Ensure the Id is set
-            updatedEvent.CAMPX__NetRevenue__c = null;
-            needsUpdate = true;
-        } else if (event.CAMPX__GrossRevenue__c == 0 || event.CAMPX__TotalExpenses__c == 0) {
-            updatedEvent.Id = event.Id; // Ensure the Id is set
-            updatedEvent.CAMPX__NetRevenue__c = 0;
+        if (Trigger.OldMap.get(event.Id).CAMPX__GrossRevenue__c != event.CAMPX__GrossRevenue__c ||
+            Trigger.OldMap.get(event.Id).CAMPX__TotalExpenses__c != event.CAMPX__TotalExpenses__c){
+            updatedEvent.Id = event.Id;        
+            updatedEvent.CAMPX__NetRevenue__c = CampXEventHelper.calculateSingleNetRevenue(event);
             needsUpdate = true;
         }
 
