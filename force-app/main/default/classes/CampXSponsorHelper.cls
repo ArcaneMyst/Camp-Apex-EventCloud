@@ -1,14 +1,22 @@
 public class CampXSponsorHelper {
     public static void updateEventRevenue(List<CAMPX__Event__c> events) {
-        for(CAMPX__Event__c event : events){
-            Map<Id, Decimal> eventToGrossRevenue = new Map<Id, Decimal>();
-            for (AggregateResult ar : [
-            SELECT Id, SUM(CAMPX__ContributionAmount__c) totalRevenue
+        // Collect Event IDs
+        Set<Id> eventIds = new Set<Id>();
+        for (CAMPX__Event__c event : events) {
+            eventIds.add(event.Id);
+        }
+
+        // Map to store Event IDs and their calculated Gross Revenue
+        Map<Id, Decimal> eventToGrossRevenue = new Map<Id, Decimal>();
+
+        // Query to calculate total contribution amount for each event
+        for (AggregateResult ar : [
+            SELECT CAMPX__Event__c, SUM(CAMPX__ContributionAmount__c) totalRevenue
             FROM CAMPX__Sponsor__c
-            WHERE CAMPX__Event__c IN :event.Id AND CAMPX__Status__c = 'Accepted'
-            GROUP BY Id
+            WHERE CAMPX__Event__c IN :eventIds AND CAMPX__Status__c = 'Accepted'
+            GROUP BY CAMPX__Event__c
         ]) {
-            eventToGrossRevenue.put((Id) ar.get('Id'), (Decimal) ar.get('totalRevenue'));
+            eventToGrossRevenue.put((Id) ar.get('CAMPX__Event__c'), (Decimal) ar.get('totalRevenue'));
         }
 
         // Prepare Event updates
@@ -24,7 +32,6 @@ public class CampXSponsorHelper {
         if (!eventsToUpdate.isEmpty()) {
             update eventsToUpdate;
         }
-        }
-
     }
+    
 }

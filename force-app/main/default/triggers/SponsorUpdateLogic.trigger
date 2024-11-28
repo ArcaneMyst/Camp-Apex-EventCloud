@@ -9,32 +9,15 @@ trigger SponsorUpdateLogic on CAMPX__Sponsor__c (after update) {
             eventIds.add(sponsor.CAMPX__Event__c);
         }
     }
-    
+      
     if (!eventIds.isEmpty()) {
-        // Query related Sponsors grouped by Event ID
-        Map<Id, Decimal> eventToGrossRevenue = new Map<Id, Decimal>();
-        for (AggregateResult ar : [
-            SELECT CAMPX__Event__c eventId, SUM(CAMPX__ContributionAmount__c) totalRevenue
-            FROM CAMPX__Sponsor__c
-            WHERE CAMPX__Event__c IN :eventIds AND CAMPX__Status__c = 'Accepted'
-            GROUP BY CAMPX__Event__c
-        ]) {
-            eventToGrossRevenue.put((Id) ar.get('eventId'), (Decimal) ar.get('totalRevenue'));
-        }
+        //convert the set to a list of event records
+        List<CAMPX__Event__c> eventRecords = [SELECT Id, CAMPX__GrossRevenue__c 
+                                              FROM CAMPX__Event__c
+                                              WHERE Id IN :eventIds];
 
-        // Prepare Event updates
-        List<CAMPX__Event__c> eventsToUpdate = new List<CAMPX__Event__c>();
-        for (Id eventId : eventToGrossRevenue.keySet()) {
-            eventsToUpdate.add(new CAMPX__Event__c(
-                Id = eventId,
-                CAMPX__GrossRevenue__c = eventToGrossRevenue.get(eventId)
-            ));
-        }
-
-        // Perform the update
-        if (!eventsToUpdate.isEmpty()) {
-            update eventsToUpdate;
-        }
+        // Call the function to update the revenue for all those events
+        CampXSponsorHelper.updateEventRevenue(eventRecords);
     }
 
 }

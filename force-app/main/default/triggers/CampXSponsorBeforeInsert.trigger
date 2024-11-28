@@ -1,4 +1,7 @@
 trigger CampXSponsorBeforeInsert on CAMPX__Sponsor__c (before insert) {
+    //Create a list of Sponsors that may need updating the Event contribution for
+    Set<Id> sponsorEventsToUpdate = new Set<Id>();
+
     // When a CAMPX__Sponsor__c record is created, and the CAMPX__Status__c is blank, it should be set to "Pending"
     for (CAMPX__Sponsor__c sponsor : Trigger.new){
         if (String.isBlank(sponsor.CAMPX__Status__c)){
@@ -12,6 +15,20 @@ trigger CampXSponsorBeforeInsert on CAMPX__Sponsor__c (before insert) {
             sponsor.CAMPX__Tier__c = 'Silver';
         } else if (sponsor.CAMPX__ContributionAmount__c >= 5000){
             sponsor.CAMPX__Tier__c = 'Gold';
+        }
+
+        if(sponsor.CAMPX__Status__c == 'Accepted' && !String.isEmpty(sponsor.CAMPX__Event__c)){
+            sponsorEventsToUpdate.add(sponsor.CAMPX__Event__c);
+        }
+
+    }
+
+    if (!sponsorEventsToUpdate.isEmpty()){
+        //Collect the list of events and call the function to update their Gross Revenue
+        List<CAMPX__Event__c> eventsToUpdate = [SELECT Id FROM CAMPX__Event__c
+                                                WHERE Id IN :sponsorEventsToUpdate];
+        if (!eventsToUpdate.isEmpty()){
+            CampXSponsorHelper.updateEventRevenue(eventsToUpdate);
         }
 
     }
