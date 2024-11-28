@@ -19,14 +19,17 @@ public class CampXSponsorHelper {
             eventToGrossRevenue.put((Id) ar.get('CAMPX__Event__c'), (Decimal) ar.get('totalRevenue'));
         }
 
-        // Prepare Event updates
+        // Prepare Event updates       
         List<CAMPX__Event__c> eventsToUpdate = new List<CAMPX__Event__c>();
-        for (Id eventId : eventToGrossRevenue.keySet()) {
+        for (Id eventId : eventIds) {
+            Decimal calculatedRevenue = eventToGrossRevenue.containsKey(eventId) 
+                ? eventToGrossRevenue.get(eventId) 
+                : 0; // Default to 0 if no "Accepted" sponsors found
             eventsToUpdate.add(new CAMPX__Event__c(
                 Id = eventId,
-                CAMPX__GrossRevenue__c = eventToGrossRevenue.get(eventId)
-            ));
-        }
+                CAMPX__GrossRevenue__c = calculatedRevenue
+        ));
+    }
 
         // Perform the update
         if (!eventsToUpdate.isEmpty()) {

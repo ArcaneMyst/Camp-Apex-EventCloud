@@ -5,9 +5,14 @@ trigger SponsorUpdateLogic on CAMPX__Sponsor__c (after update) {
     // Identify Event IDs for Sponsors updated to "Accepted" status
     for (CAMPX__Sponsor__c sponsor : Trigger.new) {
         CAMPX__Sponsor__c oldSponsor = Trigger.oldMap.get(sponsor.Id);
-        if (sponsor.CAMPX__Status__c == 'Accepted' && sponsor.CAMPX__Status__c != oldSponsor.CAMPX__Status__c) {
+        if ((sponsor.CAMPX__Status__c != oldSponsor.CAMPX__Status__c) || (sponsor.CAMPX__Event__c != oldSponsor.CAMPX__Event__c))   {
             eventIds.add(sponsor.CAMPX__Event__c);
         }
+
+        if ((sponsor.CAMPX__Event__c != oldSponsor.CAMPX__Event__c) && String.isEmpty(sponsor.CAMPX__Event__c))   {
+            eventIds.add(Trigger.oldMap.get(sponsor.Id).CAMPX__Event__c);
+        }
+
     }
       
     if (!eventIds.isEmpty()) {
