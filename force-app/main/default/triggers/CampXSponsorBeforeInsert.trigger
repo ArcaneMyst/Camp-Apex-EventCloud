@@ -17,20 +17,7 @@ trigger CampXSponsorBeforeInsert on CAMPX__Sponsor__c (before insert) {
             sponsor.CAMPX__Tier__c = 'Gold';
         }
 
-        if(sponsor.CAMPX__Status__c == 'Accepted' && !String.isEmpty(sponsor.CAMPX__Event__c)){
-            sponsorEventsToUpdate.add(sponsor.CAMPX__Event__c);
-        }
-
     }
 
-    if (!sponsorEventsToUpdate.isEmpty()){
-        //Collect the list of events and call the function to update their Gross Revenue
-        List<CAMPX__Event__c> eventsToUpdate = [SELECT Id FROM CAMPX__Event__c
-                                                WHERE Id IN :sponsorEventsToUpdate];
-        if (!eventsToUpdate.isEmpty()){
-            CampXSponsorHelper.updateEventRevenue(eventsToUpdate);
-        }
-
-    }
-
+    
 }
